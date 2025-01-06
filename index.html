@@ -71,6 +71,10 @@
       animation-name: floatAndDrift;
       animation-iteration-count: infinite;
       animation-timing-function: ease-in-out;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     /* Стиль елемента, який ми перетягуємо (клон) */
@@ -210,6 +214,15 @@
       font-size: 0.875rem; /* text-sm */
       color: #4B5563; /* Tailwind's gray-700 */
       text-align: center;
+    }
+
+    /* Стилі для підписів у глобусі */
+    .globe-sticker-caption {
+      margin-top: -1.5rem;
+      font-size: 0.75rem; /* text-xs */
+      color: #4B5563; /* Tailwind's gray-700 */
+      text-align: center;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -351,11 +364,11 @@
 
       <!-- What a Pleasure -->
       <div class="sticker-container">
-        <img src="img/what-a-pleasure.png" alt="Яке задоволення" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+        <img src="img/what-a-pleasure.png" alt="Яке задоволення!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
                hover:scale-105 hover:shadow-lg transition
                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400" role="listitem" tabindex="0"
           data-sticker="img/what-a-pleasure.png" />
-        <span class="sticker-caption">Яке задоволення</span>
+        <span class="sticker-caption">Яке задоволення!</span>
       </div>
 
       <!-- Wonderful -->
@@ -464,14 +477,14 @@
       const state = {
         groupName: userGroupName,
         paletteStickers: Array.from(document.querySelectorAll('#stickerPalette .sticker')).map(sticker => sticker.dataset.sticker),
-        globeStickers: Array.from(snowGlobe.querySelectorAll('.drifting-sticker img')).map(img => {
-          const parent = img.parentElement;
-          const rect = parent.getBoundingClientRect();
-          const globeRect = snowGlobe.getBoundingClientRect();
+        globeStickers: Array.from(snowGlobe.querySelectorAll('.drifting-sticker')).map(container => {
+          const img = container.querySelector('img');
+          const caption = container.querySelector('.globe-sticker-caption').textContent;
           return {
             src: img.src,
-            left: parseFloat(parent.style.left),
-            top: parseFloat(parent.style.top)
+            left: parseFloat(container.style.left),
+            top: parseFloat(container.style.top),
+            caption: caption
           };
         }),
         stickerCount: stickerCount
@@ -507,7 +520,7 @@
         // Відновлення стікерів у кулі
         if (state.globeStickers && state.globeStickers.length > 0) {
           state.globeStickers.forEach(stickerData => {
-            createFloatingSticker(stickerData.src, stickerData.left, stickerData.top, false);
+            createFloatingSticker(stickerData.src, stickerData.left, stickerData.top, stickerData.caption, false);
           });
         }
 
@@ -599,8 +612,9 @@
         // Створюємо клон для "drag"
         draggingSticker = sticker.cloneNode(true);
         draggingSticker.classList.add('dragging');
-        // Зберігаємо шлях до зображення
+        // Зберігаємо шлях до зображення та підпис
         draggingSticker.dataset.sticker = sticker.dataset.sticker;
+        draggingSticker.dataset.caption = sticker.closest('.sticker-container').querySelector('.sticker-caption').textContent;
 
         // Початкове позиціонування
         draggingSticker.style.left = e.pageX + 'px';
@@ -644,7 +658,8 @@
         }
 
         const stickerSrc = draggingSticker.dataset.sticker || 'img/default.png';
-        createFloatingSticker(stickerSrc, dropX, dropY, true); // Pass true to save state
+        const stickerCaption = draggingSticker.dataset.caption || 'Емоція';
+        createFloatingSticker(stickerSrc, dropX, dropY, stickerCaption, true); // Pass true to save state
 
         stickerCount++;
         stickerCountSpan.textContent = stickerCount;
@@ -697,29 +712,34 @@
     // =========================
     //     СТВОРЕННЯ СТІКЕРА
     // =========================
-    function createFloatingSticker(stickerSrc, dropX, dropY, save = true) {
+    function createFloatingSticker(stickerSrc, dropX, dropY, caption, save = true) {
       const stickerContainer = document.createElement('div');
-      stickerContainer.className = 'absolute drifting-sticker flex items-center justify-center';
+      stickerContainer.className = 'absolute drifting-sticker flex flex-col items-center justify-center';
 
       const stickerSize = 96; // Back to original 6rem size
       stickerContainer.style.width = `${stickerSize}px`;
-      stickerContainer.style.height = `${stickerSize}px`;
+      stickerContainer.style.height = `${stickerSize + 20}px`; // Extra space for caption
 
       const stickerImg = document.createElement('img');
       stickerImg.src = stickerSrc;
-      stickerImg.alt = 'Sticker image';
+      stickerImg.alt = caption;
       stickerImg.style.width = '100%';
       stickerImg.style.height = '100%';
       stickerImg.style.objectFit = 'contain';
 
+      const stickerCaption = document.createElement('span');
+      stickerCaption.className = 'globe-sticker-caption';
+      stickerCaption.textContent = caption;
+
       stickerContainer.appendChild(stickerImg);
+      stickerContainer.appendChild(stickerCaption);
 
       // Get globe dimensions
       const globeRect = snowGlobe.getBoundingClientRect();
 
       // Adjust position to center the sticker on the drop point
       const adjustedX = Math.max(0, Math.min(dropX - stickerSize / 2, globeRect.width - stickerSize));
-      const adjustedY = Math.max(0, Math.min(dropY - stickerSize / 2, globeRect.height - stickerSize));
+      const adjustedY = Math.max(0, Math.min(dropY - (stickerSize + 20) / 2, globeRect.height - (stickerSize + 20)));
 
       stickerContainer.style.left = `${adjustedX}px`;
       stickerContainer.style.top = `${adjustedY}px`;
