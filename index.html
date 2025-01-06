@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="uk">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Снігова куля з спостереженнями</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Снігова куля з зображеннями</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -36,7 +35,7 @@
     }
 
     /* 
-      Плаваюча анімація для наклейок всередині кулі
+      Плаваюча анімація для стікерів всередині кулі
     */
     @keyframes floatAndDrift {
       0% {
@@ -89,11 +88,9 @@
       0% {
         box-shadow: 0 0 0 4px rgba(255, 0, 0, 0);
       }
-
       50% {
         box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.5);
       }
-
       100% {
         box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
       }
@@ -110,87 +107,163 @@
   <div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
     <!-- Заголовок -->
     <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-blue-600 mb-4">
-      Снігова куля з спостереженнями
+      Снігова куля з зображеннями
     </h1>
     <p class="text-center text-sm sm:text-base text-gray-700 mb-8">
-      Торкніться або клікніть на наклейку й перетягніть її в кулю.<br />
-      Вона залишиться всередині та плаватиме, мов сніжинка!
+      Торкніться або клікніть на картинку і перетягніть її в кулю.<br />
+      Вона залишиться всередині і плаватиме, мов сніжинка!
     </p>
 
     <!-- Секція зі Сніговою Кулею -->
     <div class="flex flex-col items-center">
       <!-- Снігова Куля (зона для "дропу") -->
-      <div id="snowGlobe" class="
-          w-64 h-64 sm:w-80 sm:h-80 rounded-full
-          relative overflow-hidden flex items-center justify-center mb-4
-          bg-gradient-to-b from-white to-blue-100
-          border-8 border-white
-          shadow-2xl
-          ring ring-blue-200 ring-offset-4 ring-offset-blue-50
-        " role="region" aria-label="Зона для відпускання наклейок">
-        <!-- Live region для оголошення кількості наклейок -->
+      <div
+        id="snowGlobe"
+        class="w-72 h-72 sm:w-96 sm:h-96 rounded-full relative overflow-hidden flex items-center justify-center mb-4
+               bg-gradient-to-b from-white to-blue-100 border-8 border-white shadow-2xl
+               ring ring-blue-200 ring-offset-4 ring-offset-blue-50"
+        role="region"
+        aria-label="Зона для відпускання зображень"
+      >
+        <!-- Live region для оголошення кількості стікерів -->
         <p id="globeAnnouncement" class="sr-only" aria-live="polite"></p>
       </div>
-
-      <!-- Лічильник Наклейок -->
+      <!-- Лічильник стікерів -->
       <div class="text-gray-700 text-sm sm:text-base mb-4">
-        Додано наклейок:
+        Додано реакцій від сніговиків:
         <span id="stickerCount" class="font-medium text-blue-600">0</span>
       </div>
     </div>
 
-    <!-- Палітра Наклейок -->
-    <section class="flex flex-wrap justify-center gap-4" role="list" aria-label="Палітра наклейок">
-      <!-- 
-        Кожна наклейка має role="listitem",
-        використовуємо pointerdown / pointermove / pointerup для перетягування.
-      -->
-      <div class="sticker bg-blue-200 text-blue-800 font-semibold
-               w-16 h-16 flex items-center justify-center
-               rounded-full shadow-md cursor-pointer
+    <!-- Палітра зображень (стікери) -->
+    <section class="flex flex-wrap justify-center gap-4" role="list" aria-label="Палітра зображень">
+      <!-- Bravo -->
+      <img
+        src="img/bravo.png"
+        alt="Браво!"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
                hover:scale-105 hover:shadow-lg transition
-               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400
-               text-xs sm:text-sm text-center
-        " role="listitem" tabindex="0" data-sticker="Чудова ідея">
-        💫<br />Ідея
-      </div>
-
-      <div class="sticker bg-green-200 text-green-800 font-semibold
-               w-16 h-16 flex items-center justify-center
-               rounded-full shadow-md cursor-pointer
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/bravo.png"
+      />
+      
+      <!-- Breathtaking -->
+      <img
+        src="img/breathtaking.png"
+        alt="Захоплююче!"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
                hover:scale-105 hover:shadow-lg transition
-               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400
-               text-xs sm:text-sm text-center
-        " role="listitem" tabindex="0" data-sticker="Командна робота">
-        🤝<br />Команда
-      </div>
-
-      <div class="sticker bg-yellow-200 text-yellow-800 font-semibold
-               w-16 h-16 flex items-center justify-center
-               rounded-full shadow-md cursor-pointer
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/breathtaking.png"
+      />
+      
+      <!-- Enjoy -->
+      <img
+        src="img/enjoy.png"
+        alt="Насолода!"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
                hover:scale-105 hover:shadow-lg transition
-               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400
-               text-xs sm:text-sm text-center
-        " role="listitem" tabindex="0" data-sticker="Творчість">
-        🎨<br />Творчість
-      </div>
-
-      <div class="sticker bg-pink-200 text-pink-800 font-semibold
-               w-16 h-16 flex items-center justify-center
-               rounded-full shadow-md cursor-pointer
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/enjoy.png"
+      />
+      
+      <!-- Interesting -->
+      <img
+        src="img/interesting.png"
+        alt="Цікаво!"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
                hover:scale-105 hover:shadow-lg transition
-               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400
-               text-xs sm:text-sm text-center
-        " role="listitem" tabindex="0" data-sticker="Натхнення">
-        ✨<br />Натхнення
-      </div>
-    </section>
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/interesting.png"
+      />
+      
+      <!-- Nightmare -->
+      <img
+        src="img/nightmare.png"
+        alt="Кошмар!"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/nightmare.png"
+      />
+      
+      <!-- On Top -->
+      <img
+        src="img/on-top.png"
+        alt="На висоті!"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/on-top.png"
+      />
+      
+      <!-- Sad -->
+      <img
+        src="img/sad.png"
+        alt="Сумно :("
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/sad.png"
+      />
+      
+      <!-- What a Pleasure -->
+      <img
+        src="img/what-a-pleasure.png"
+        alt="Яке задоволення"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/what-a-pleasure.png"
+      />
+      
+      <!-- Wonderful -->
+      <img
+        src="img/wonderful.png"
+        alt="Чудово!"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/wonderful.png"
+      />
+      
+      <!-- Wooh -->
+      <img
+        src="img/wooh.png"
+        alt="Вау!"
+        class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400"
+        role="listitem"
+        tabindex="0"
+        data-sticker="img/wooh.png"
+      />
 
     <!-- Кнопка для Очищення Кулі -->
     <div class="mt-4 flex justify-center">
       <button
         class="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
-        type="button" onclick="resetSnowGlobe()">
+        type="button"
+        onclick="resetSnowGlobe()"
+      >
         Очистити кулю
       </button>
     </div>
@@ -199,18 +272,23 @@
     <!--       ДОДАНО КНОПКИ ДЛЯ ШАРІНГУ       -->
     <!-- ===================================== -->
     <div class="mt-8 flex justify-center space-x-4">
-      <!-- Зробити скріншот і (теоретично) поділитися у Facebook -->
+      <!-- Зробити скріншот та поділитися (якщо можливо) -->
       <button
-        class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
-        type="button" onclick="captureAndShareScreenshot('facebook')">
-        Скріншот → Facebook
-      </button>
-
-      <!-- Зробити скріншот і (теоретично) поділитися в Instagram -->
-      <button
-        class="bg-pink-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-pink-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400"
-        type="button" onclick="captureAndShareScreenshot('instagram')">
-        Скріншот → Instagram
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 flex items-center gap-2"
+        type="button"
+        onclick="captureAndShareScreenshot()"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M24 12.073c0-6.627-5.373-12-12-12S0 5.446 0 12.073c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+          />
+        </svg>
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"
+          />
+        </svg>
+        Поділитися у соцмережі
       </button>
     </div>
   </div>
@@ -228,11 +306,7 @@
     const globeAnnouncement = document.getElementById('globeAnnouncement');
 
     let stickerCount = 0;
-
-    // "Тимчасова" наклейка, яку перетягують
-    let draggingSticker = null;
-
-    // Зміщення по X/Y всередині наклейки
+    let draggingSticker = null; // "Тимчасова" наклейка (клон), яку перетягують
     let offsetX = 0;
     let offsetY = 0;
 
@@ -240,21 +314,20 @@
     //      ПОДІЇ DnD
     // =========================
     stickers.forEach((sticker) => {
-      // Початок перетягування
       sticker.addEventListener('pointerdown', (e) => {
         e.preventDefault();
 
-        // Запам'ятовуємо зміщення (куди користувач натиснув всередині наклейки)
+        // Запам'ятовуємо зміщення всередині наклейки
         const rect = sticker.getBoundingClientRect();
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
 
-        // Дозволити захоплення подій
         sticker.setPointerCapture(e.pointerId);
 
-        // Створюємо клон для візуального "drag"
+        // Створюємо клон для "drag"
         draggingSticker = sticker.cloneNode(true);
         draggingSticker.classList.add('dragging');
+        // Зберігаємо шлях до зображення
         draggingSticker.dataset.sticker = sticker.dataset.sticker;
 
         // Початкове позиціонування
@@ -280,9 +353,7 @@
     // Кінець перетягування
     function handlePointerUp(e) {
       if (!draggingSticker) return;
-
       e.preventDefault();
-      // Відпускаємо захоплення
       e.target.releasePointerCapture(e.pointerId);
 
       // Координати точки відпускання
@@ -291,8 +362,6 @@
 
       // Межі кулі
       const globeRect = snowGlobe.getBoundingClientRect();
-
-      // Перевірка, чи точка всередині кулі
       const insideGlobe = (
         dropX >= globeRect.left &&
         dropX <= globeRect.right &&
@@ -306,14 +375,14 @@
           navigator.vibrate(80);
         }
 
-        // Створення "плаваючої" наклейки
-        const text = draggingSticker.dataset.sticker || 'Наклейка';
-        createFloatingSticker(text);
+        // Шлях до зображення (з data-sticker)
+        const stickerSrc = draggingSticker.dataset.sticker || 'img/default.png';
+        createFloatingSticker(stickerSrc);
 
         // Оновлення лічильника
         stickerCount++;
         stickerCountSpan.textContent = stickerCount;
-        globeAnnouncement.textContent = `Додано наклейок: ${stickerCount}`;
+        globeAnnouncement.textContent = `Зібрано зображень: ${stickerCount}`;
 
         // Пульсація кулі
         snowGlobe.classList.remove('pulse-animation');
@@ -332,52 +401,57 @@
     }
 
     // =========================
-    //     СТВОРЕННЯ НАКЛЕЙКИ
+    //     СТВОРЕННЯ СТІКЕРА
     // =========================
-    function createFloatingSticker(text) {
-      // Новий div з текстом
-      const stickerElement = document.createElement('div');
-      stickerElement.textContent = text;
-
-      stickerElement.className = `
-        absolute font-semibold text-center
+    function createFloatingSticker(stickerSrc) {
+      // Контейнер для плаваючого елемента
+      const stickerContainer = document.createElement('div');
+      stickerContainer.className = `
+        absolute drifting-sticker
         flex items-center justify-center
-        rounded-full shadow-md
-        text-blue-800 bg-blue-100
-        drifting-sticker
       `;
-      // Розмір "сніжки"
-      stickerElement.style.width = '3rem';
-      stickerElement.style.height = '3rem';
+      // Розмір контейнера (3rem = 48px приблизно)
+      stickerContainer.style.width = '6rem';
+      stickerContainer.style.height = '6rem';
 
-      // Розташування випадкове всередині кулі
+      // Додаємо <img> всередині контейнера
+      const stickerImg = document.createElement('img');
+      stickerImg.src = stickerSrc;
+      stickerImg.alt = 'Sticker image';
+      stickerImg.style.width = '100%';
+      stickerImg.style.height = '100%';
+      stickerImg.style.objectFit = 'contain';
+
+      // Приєднуємо <img> до контейнера
+      stickerContainer.appendChild(stickerImg);
+
+      // Випадкове розташування всередині кулі
       const globeRect = snowGlobe.getBoundingClientRect();
-      const maxX = globeRect.width - 48; // 48 ~ розмір елемента
+      const maxX = globeRect.width - 48; // 48px ~ 3rem
       const maxY = globeRect.height - 48;
       const randomX = Math.random() * maxX;
       const randomY = Math.random() * maxY;
-
-      stickerElement.style.left = randomX + 'px';
-      stickerElement.style.top = randomY + 'px';
+      stickerContainer.style.left = randomX + 'px';
+      stickerContainer.style.top = randomY + 'px';
 
       // Випадкова тривалість анімації (4-8 секунд)
       const duration = Math.random() * 4 + 4;
-      stickerElement.style.animationDuration = `${duration}s`;
+      stickerContainer.style.animationDuration = `${duration}s`;
 
-      // Додаємо до кулі
-      snowGlobe.appendChild(stickerElement);
+      // Додаємо в кулю
+      snowGlobe.appendChild(stickerContainer);
     }
 
     // =========================
     //  ОЧИЩЕННЯ СНІГОВОЇ КУЛІ
     // =========================
     function resetSnowGlobe() {
-      // Видалити всі "плаваючі" наклейки
+      // Видалити всі "плаваючі" стікери
       snowGlobe.innerHTML = '';
       // Скинути лічильник
       stickerCount = 0;
       stickerCountSpan.textContent = stickerCount;
-      globeAnnouncement.textContent = `Всі наклейки видалено.`;
+      globeAnnouncement.textContent = `Всі зображення видалено.`;
     }
 
     // =========================
@@ -396,6 +470,7 @@
 
       document.body.appendChild(snowflake);
 
+      // Видалити сніжинку після завершення анімації
       setTimeout(() => {
         if (snowflake.parentNode) {
           snowflake.parentNode.removeChild(snowflake);
@@ -410,16 +485,16 @@
     // =========================
     async function captureAndShareScreenshot() {
       try {
-        // 1. Захопити скріншот всієї сторінки (або ви можете обрати #snowGlobe)
+        // Захопити скріншот всієї сторінки (або ви можете обрати #snowGlobe)
         const canvas = await html2canvas(document.body, { useCORS: true });
         const dataURL = canvas.toDataURL('image/png');
 
-        // 1. Convert dataURL → Blob → File
+        // Перетворити в Blob → File
         const response = await fetch(dataURL);
         const blob = await response.blob();
         const file = new File([blob], "screenshot.png", { type: "image/png" });
 
-        // 2. Attempt to share via Web Share API          
+        // Спробувати скористатись Web Share API
         try {
           await navigator.share({
             files: [file],
@@ -435,5 +510,4 @@
     }
   </script>
 </body>
-
 </html>
