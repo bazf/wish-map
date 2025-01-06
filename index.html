@@ -282,7 +282,7 @@
     <div id="cooldownContainer" class="flex flex-col items-center">
       <img src="img/waiting.png" alt="Час очікування" />
       <div id="cooldownText" class="mt-2 text-blue-600 font-medium">
-        Зачекайте з емоціями! Не всі одразу,  через хвильку зможете знову дарувати їх!
+        Зачекаємо, щоб не витрачати усі емоції одразу! Зачекайте, будь ласка, хвильку!
       </div>
     </div>
 
@@ -324,7 +324,7 @@
     const cooldownContainer = document.getElementById('cooldownContainer');
 
     const MAX_STICKERS = 5;
-    const COOLDOWN_DURATION = 10 * 1000; // 1 minute in milliseconds
+    const COOLDOWN_DURATION = 10 * 1000; 
 
     let stickerCount = 0;
     let draggingSticker = null; // "Тимчасова" наклейка (клон), яку перетягують
