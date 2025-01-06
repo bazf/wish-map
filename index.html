@@ -19,6 +19,13 @@
       }
     }
 
+    #snowGlobe {
+      position: relative;
+      --globe-radius: calc(min(72px, 96px) / 2);
+      mask-image: radial-gradient(circle at center, black 0%, black calc(100% - var(--globe-radius)), transparent 100%);
+      -webkit-mask-image: radial-gradient(circle at center, black 0%, black calc(100% - var(--globe-radius)), transparent 100%);
+    }
+
     .snowflake {
       position: fixed;
       top: -3rem;
@@ -121,40 +128,22 @@
       <!-- Container for Snow Globe and Reset Button -->
       <div class="relative">
         <!-- Snow Globe (drop zone) -->
-        <div
-          id="snowGlobe"
-          class="w-72 h-72 sm:w-96 sm:h-96 rounded-full relative overflow-hidden flex items-center justify-center
+        <div id="snowGlobe" class="w-72 h-72 sm:w-96 sm:h-96 rounded-full relative overflow-hidden flex items-center justify-center
                  bg-gradient-to-b from-white to-blue-100 border-8 border-white shadow-2xl
-                 ring ring-blue-200 ring-offset-4 ring-offset-blue-50"
-          role="region"
-          aria-label="Зона для відпускання зображень"
-        >
+                 ring ring-blue-200 ring-offset-4 ring-offset-blue-50" role="region"
+          aria-label="Зона для відпускання зображень">
           <!-- Live region for announcements -->
           <p id="globeAnnouncement" class="sr-only" aria-live="polite"></p>
         </div>
-        
+
         <!-- Reset Button -->
-        <button
-          type="button"
-          onclick="resetSnowGlobe()"
-          class="absolute -top-4 -right-4 p-3 bg-red-500 hover:bg-red-600 
+        <button type="button" onclick="resetSnowGlobe()" class="absolute -top-4 -right-4 p-3 bg-red-500 hover:bg-red-600 
                  text-white rounded-full shadow-lg transition-all duration-200
                  hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-400 
-                 focus:ring-offset-2 group"
-          aria-label="Очистити кулю"
-        >
+                 focus:ring-offset-2 group" aria-label="Очистити кулю">
           <!-- Trash Icon (SVG) -->
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="20" 
-            height="20" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            stroke-width="2" 
-            stroke-linecap="round" 
-            stroke-linejoin="round"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 6h18"></path>
             <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
             <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
@@ -170,7 +159,7 @@
           </span>
         </button>
       </div>
-      
+
       <!-- Sticker Counter -->
       <div class="text-gray-700 text-sm sm:text-base mt-4">
         Подаровано снігових емоцій:
@@ -321,82 +310,67 @@
 
     // Кінець перетягування
     function handlePointerUp(e) {
-  if (!draggingSticker) return;
-  e.preventDefault();
-  e.target.releasePointerCapture(e.pointerId);
+      if (!draggingSticker) return;
+      e.preventDefault();
+      e.target.releasePointerCapture(e.pointerId);
 
-  // Get drop coordinates
-  const dropX = e.clientX;
-  const dropY = e.clientY;
+      const globeRect = snowGlobe.getBoundingClientRect();
+      const dropX = e.clientX - globeRect.left;
+      const dropY = e.clientY - globeRect.top;
 
-  // Get snow globe boundaries
-  const globeRect = snowGlobe.getBoundingClientRect();
-  const insideGlobe = (
-    dropX >= globeRect.left &&
-    dropX <= globeRect.right &&
-    dropY >= globeRect.top &&
-    dropY <= globeRect.bottom
-  );
+      const insideGlobe = (
+        e.clientX >= globeRect.left &&
+        e.clientX <= globeRect.right &&
+        e.clientY >= globeRect.top &&
+        e.clientY <= globeRect.bottom
+      );
 
-  if (insideGlobe) {
-    // Vibration feedback if supported
-    if (navigator.vibrate) {
-      navigator.vibrate(80);
+      if (insideGlobe) {
+        if (navigator.vibrate) {
+          navigator.vibrate(80);
+        }
+
+        const stickerSrc = draggingSticker.dataset.sticker || 'img/default.png';
+        createFloatingSticker(stickerSrc, dropX, dropY);
+
+        stickerCount++;
+        stickerCountSpan.textContent = stickerCount;
+        globeAnnouncement.textContent = `Зібрано зображень: ${stickerCount}`;
+
+        snowGlobe.classList.remove('pulse-animation');
+        void snowGlobe.offsetWidth;
+        snowGlobe.classList.add('pulse-animation');
+
+        const originalSticker = e.target;
+        originalSticker.style.transition = 'all 0.3s ease-out';
+        originalSticker.style.opacity = '0';
+        originalSticker.style.transform = 'scale(0.8)';
+
+        setTimeout(() => {
+          originalSticker.remove();
+          globeAnnouncement.textContent = `Стікер використано та видалено з палітри. Залишилось стікерів: ${document.querySelectorAll('.sticker').length}`;
+        }, 300);
+      }
+
+      if (draggingSticker.parentNode) {
+        draggingSticker.parentNode.removeChild(draggingSticker);
+      }
+      draggingSticker = null;
+      e.target.removeEventListener('pointermove', handlePointerMove);
     }
-
-    // Get sticker source
-    const stickerSrc = draggingSticker.dataset.sticker || 'img/default.png';
-    createFloatingSticker(stickerSrc);
-
-    // Update counter
-    stickerCount++;
-    stickerCountSpan.textContent = stickerCount;
-    globeAnnouncement.textContent = `Зібрано зображень: ${stickerCount}`;
-
-    // Pulse animation for the globe
-    snowGlobe.classList.remove('pulse-animation');
-    void snowGlobe.offsetWidth; // Reset animation
-    snowGlobe.classList.add('pulse-animation');
-
-    // Remove the original sticker with fade-out animation
-    const originalSticker = e.target;
-    originalSticker.style.transition = 'all 0.3s ease-out';
-    originalSticker.style.opacity = '0';
-    originalSticker.style.transform = 'scale(0.8)';
-    
-    setTimeout(() => {
-      originalSticker.remove();
-      // Update accessibility announcement
-      globeAnnouncement.textContent = `Стікер використано та видалено з палітри. Залишилось стікерів: ${document.querySelectorAll('.sticker').length}`;
-    }, 300);
-  }
-
-  // Remove the dragging clone
-  if (draggingSticker.parentNode) {
-    draggingSticker.parentNode.removeChild(draggingSticker);
-  }
-  draggingSticker = null;
-
-  // Remove pointermove listener
-  e.target.removeEventListener('pointermove', handlePointerMove);
-}
 
 
     // =========================
     //     СТВОРЕННЯ СТІКЕРА
     // =========================
-    function createFloatingSticker(stickerSrc) {
-      // Контейнер для плаваючого елемента
+    function createFloatingSticker(stickerSrc, dropX, dropY) {
       const stickerContainer = document.createElement('div');
-      stickerContainer.className = `
-        absolute drifting-sticker
-        flex items-center justify-center
-      `;
-      // Розмір контейнера (3rem = 48px приблизно)
-      stickerContainer.style.width = '6rem';
-      stickerContainer.style.height = '6rem';
+      stickerContainer.className = 'absolute drifting-sticker flex items-center justify-center';
 
-      // Додаємо <img> всередині контейнера
+      const stickerSize = 96; // Back to original 6rem size
+      stickerContainer.style.width = `${stickerSize}px`;
+      stickerContainer.style.height = `${stickerSize}px`;
+
       const stickerImg = document.createElement('img');
       stickerImg.src = stickerSrc;
       stickerImg.alt = 'Sticker image';
@@ -404,23 +378,22 @@
       stickerImg.style.height = '100%';
       stickerImg.style.objectFit = 'contain';
 
-      // Приєднуємо <img> до контейнера
       stickerContainer.appendChild(stickerImg);
 
-      // Випадкове розташування всередині кулі
+      // Get globe dimensions
       const globeRect = snowGlobe.getBoundingClientRect();
-      const maxX = globeRect.width - 48; // 48px ~ 3rem
-      const maxY = globeRect.height - 48;
-      const randomX = Math.random() * maxX;
-      const randomY = Math.random() * maxY;
-      stickerContainer.style.left = randomX + 'px';
-      stickerContainer.style.top = randomY + 'px';
 
-      // Випадкова тривалість анімації (4-8 секунд)
+      // Adjust position to center the sticker on the drop point
+      const adjustedX = Math.max(0, Math.min(dropX - stickerSize / 2, globeRect.width - stickerSize));
+      const adjustedY = Math.max(0, Math.min(dropY - stickerSize / 2, globeRect.height - stickerSize));
+
+      stickerContainer.style.left = `${adjustedX}px`;
+      stickerContainer.style.top = `${adjustedY}px`;
+
+      // Keep the floating animation
       const duration = Math.random() * 4 + 4;
       stickerContainer.style.animationDuration = `${duration}s`;
 
-      // Додаємо в кулю
       snowGlobe.appendChild(stickerContainer);
     }
 
