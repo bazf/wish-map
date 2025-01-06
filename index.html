@@ -444,23 +444,30 @@
         const dataURL = canvas.toDataURL('image/png');
 
         if (platform === 'facebook') {
-          // ---------------------------
-          // FACEBOOK SHARE (DEMO ONLY)
-          // ---------------------------
-          // Facebook не приймає "dataURL" напряму. Зазвичай потрібно:
-          // 1) Завантажити зображення на свій сервер або сервіс,
-          // 2) Отримати публічний URL,
-          // 3) Використати стандартний share link з URL зображення.
-          //
-          // Тут лише відкриємо нове вікно з нашим скріншотом, 
-          // щоб продемонструвати отриманий результат.
-          const newWindow = window.open();
-          newWindow.document.write('<img src="' + dataURL + '" />');
-          newWindow.document.title = "Ваш скріншот";
+  // 1. Convert dataURL → Blob → File
+  const response = await fetch(dataURL);
+  const blob = await response.blob();
+  const file = new File([blob], "screenshot.png", { type: "image/png" });
 
-          alert("Facebook sharing із dataURL неможливий без завантаження на сервер. (Демо: відкрили скріншот в новому вікні.)");
-        } 
-        else if (platform === 'instagram') {
+  // 2. Attempt to share via Web Share API
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: 'Снігова куля',
+        text: 'Подивіться на цю цікаву сторінку!'
+      });
+    } catch (err) {
+      console.error('Помилка при використанні Web Share API:', err);
+    }
+  } else {
+    // 3. Fallback if sharing files isn’t supported
+    const newWindow = window.open();
+    newWindow.document.write('<img src="' + dataURL + '" />');
+    newWindow.document.title = "Ваш скріншот";
+    alert("Ваш браузер не підтримує прямий share файлів. (Демо: відкрили скріншот в новому вікні.)");
+  }
+        if (platform === 'instagram') {
           // -----------------------------
           // INSTAGRAM SHARE (DEMO ONLY)
           // -----------------------------
