@@ -109,6 +109,48 @@
     .pulse-animation {
       animation: pulseBorder 0.8s ease-out;
     }
+
+    /* Стиль для повідомлення про повний глобус */
+    #fullMessage {
+      margin-top: 1rem;
+      color: #3b82f6; /* Tailwind's blue-500 */
+      font-weight: 600;
+      display: none; /* Initially hidden */
+      text-align: center;
+    }
+
+    /* Стиль для блурного затемнення */
+    #glareOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(59, 130, 246, 0.4); /* Tailwind's blue-500 with transparency */
+      backdrop-filter: blur(5px);
+      border-radius: 50%;
+      display: none; /* Initially hidden */
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Стиль для Cooldown Container */
+    #cooldownContainer {
+      display: none; /* Initially hidden */
+    }
+
+    #cooldownContainer img {
+      width: 150px;
+      height: 100px;
+      object-fit: contain;
+    }
+
+    #cooldownText {
+      margin-top: 0.5rem;
+      color: #3b82f6; /* Tailwind's blue-500 */
+      font-weight: 600;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -132,6 +174,8 @@
                  bg-gradient-to-b from-white to-blue-100 border-8 border-white shadow-2xl
                  ring ring-blue-200 ring-offset-4 ring-offset-blue-50" role="region"
           aria-label="Зона для відпускання зображень">
+          <!-- Glare Overlay -->
+          <div id="glareOverlay"></div>
           <!-- Live region for announcements -->
           <p id="globeAnnouncement" class="sr-only" aria-live="polite"></p>
         </div>
@@ -162,13 +206,17 @@
 
       <!-- Sticker Counter -->
       <div class="text-gray-700 text-sm sm:text-base mt-4">
-        Подаровано снігових емоцій:
-        <span id="stickerCount" class="font-medium text-blue-600">0</span>
+        Подаровано <span id="stickerCount" class="font-medium text-blue-600">0</span> снігових емоцій з 5-ти.
+      </div>
+
+      <!-- Повідомлення про повний глобус -->
+      <div id="fullMessage" class="text-blue-600">
+        Снігова куля вже заповнена!
       </div>
     </div>
 
     <!-- Палітра зображень (стікери) -->
-    <section class="flex flex-wrap justify-center gap-2 mb-2" role="list" aria-label="Палітра зображень">
+    <section id="stickerPalette" class="flex flex-wrap justify-center gap-2 mb-2" role="list" aria-label="Палітра зображень">
       <!-- Bravo -->
       <img src="img/bravo.png" alt="Браво!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
              hover:scale-105 hover:shadow-lg transition
@@ -230,6 +278,14 @@
         data-sticker="img/wooh.png" />
     </section>
 
+    <!-- Cooldown Container -->
+    <div id="cooldownContainer" class="flex flex-col items-center">
+      <img src="img/waiting.png" alt="Час очікування" />
+      <div id="cooldownText" class="mt-2 text-blue-600 font-medium">
+        Зачекайте з емоціями! Не всі одразу,  через хвильку зможете знову дарувати їх!
+      </div>
+    </div>
+
     <!-- ===================================== -->
     <!--       ДОДАНО КНОПКИ ДЛЯ ШАРІНГУ       -->
     <!-- ===================================== -->
@@ -245,7 +301,7 @@
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path
             d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" />
-        </svg>
+          </svg>
         Поділитися у соцмережі
       </button>
     </div>
@@ -262,17 +318,32 @@
     const snowGlobe = document.getElementById('snowGlobe');
     const stickerCountSpan = document.getElementById('stickerCount');
     const globeAnnouncement = document.getElementById('globeAnnouncement');
+    const fullMessage = document.getElementById('fullMessage');
+    const glareOverlay = document.getElementById('glareOverlay');
+    const stickerPalette = document.getElementById('stickerPalette');
+    const cooldownContainer = document.getElementById('cooldownContainer');
+
+    const MAX_STICKERS = 5;
+    const COOLDOWN_DURATION = 10 * 1000; // 1 minute in milliseconds
 
     let stickerCount = 0;
     let draggingSticker = null; // "Тимчасова" наклейка (клон), яку перетягують
     let offsetX = 0;
     let offsetY = 0;
 
+    let isFull = false;
+    let isCooldown = false;
+
     // =========================
     //      ПОДІЇ DnD
     // =========================
     stickers.forEach((sticker) => {
       sticker.addEventListener('pointerdown', (e) => {
+        if (isFull || isCooldown) {
+          // Prevent dragging if the globe is full or cooldown is active
+          return;
+        }
+
         e.preventDefault();
 
         // Запам'ятовуємо зміщення всередині наклейки
@@ -325,7 +396,7 @@
         e.clientY <= globeRect.bottom
       );
 
-      if (insideGlobe) {
+      if (insideGlobe && !isFull && !isCooldown) {
         if (navigator.vibrate) {
           navigator.vibrate(80);
         }
@@ -350,6 +421,17 @@
           originalSticker.remove();
           globeAnnouncement.textContent = `Стікер використано та видалено з палітри. Залишилось стікерів: ${document.querySelectorAll('.sticker').length}`;
         }, 300);
+
+        // Check if maximum stickers reached
+        if (stickerCount >= MAX_STICKERS) {
+          isFull = true;
+          showFullGlobeIndicator();
+        }
+
+        // Start cooldown if not full
+        if (!isFull) {
+          startCooldown();
+        }
       }
 
       if (draggingSticker.parentNode) {
@@ -408,10 +490,64 @@
       stickerCount = 0;
       stickerCountSpan.textContent = stickerCount;
 
-      // Reload the page to reset the palette
-      window.location.reload();
+      // Скинути прапорець повноти
+      isFull = false;
 
+      // Сховати повідолення та затемнення
+      hideFullGlobeIndicator();
+
+      // Скинути cooldown якщо активний
+      if (isCooldown) {
+        endCooldown();
+      }
+
+      // Показати всі стікери в палітрі
+      const allStickers = document.querySelectorAll('.sticker');
+      allStickers.forEach((sticker) => {
+        sticker.style.opacity = '1';
+        sticker.style.transform = 'scale(1)';
+        sticker.style.transition = 'none';
+      });
+
+      // Оновити повідомлення
       globeAnnouncement.textContent = `Всі зображення видалено. Палітра оновлена.`;
+    }
+
+    // =========================
+    //  ПОВІДОМЛЕННЯ ПРО ПОВНИЙ ГЛОБУС
+    // =========================
+    function showFullGlobeIndicator() {
+      fullMessage.style.display = 'block';
+      glareOverlay.style.display = 'block';
+    }
+
+    function hideFullGlobeIndicator() {
+      fullMessage.style.display = 'none';
+      glareOverlay.style.display = 'none';
+    }
+
+    // =========================
+    //      COOLDOWN MECHANISM
+    // =========================
+    function startCooldown() {
+      isCooldown = true;
+      // Hide the sticker palette
+      stickerPalette.classList.add('hidden');
+      // Show the cooldown container
+      cooldownContainer.style.display = 'flex';
+
+      // Set a timeout for the cooldown duration
+      setTimeout(() => {
+        endCooldown();
+      }, COOLDOWN_DURATION);
+    }
+
+    function endCooldown() {
+      isCooldown = false;
+      // Show the sticker palette
+      stickerPalette.classList.remove('hidden');
+      // Hide the cooldown container
+      cooldownContainer.style.display = 'none';
     }
 
     // =========================
