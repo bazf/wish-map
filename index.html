@@ -126,12 +126,12 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(59, 130, 246, 0.4); /* Tailwind's blue-500 with transparency */
+      background: linear-gradient(324deg, rgb(37 115 213 / 60%), rgb(250 252 255 / 20%));
       backdrop-filter: blur(5px);
       border-radius: 50%;
       display: none; /* Initially hidden */
       pointer-events: none;
-      z-index: 10;
+      z-index: 0;
     }
 
     /* Стиль для Cooldown Container */
@@ -151,14 +151,69 @@
       font-weight: 600;
       text-align: center;
     }
+
+    /* Стилі для модального вікна */
+    #groupModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none; /* Initially hidden */
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    #groupModalContent {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      max-width: 90%;
+      width: 400px;
+      text-align: center;
+    }
+
+    #groupModalContent input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+    }
+
+    #groupModalContent button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #groupModalContent button:hover {
+      background-color: #2563eb;
+    }
   </style>
 </head>
 
 <body class="bg-blue-50 font-sans text-gray-800 relative overflow-hidden">
+  <!-- Модальне вікно для введення назви групи -->
+  <div id="groupModal" class="flex">
+    <div id="groupModalContent">
+      <h2 class="text-xl font-bold mb-4">Введіть назву групи, яку ви представляєте</h2>
+      <input type="text" id="groupNameInput" placeholder="Назва групи" />
+      <button id="submitGroupName" class="mt-4">Підтвердити</button>
+    </div>
+  </div>
+
   <!-- Головний Контейнер -->
-  <div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+  <div id="mainContent" class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
     <!-- Заголовок -->
-    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-blue-600 mb-4">
+    <h1 id="mainHeader" class="text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-blue-600 mb-4">
       Подаруй емоцію Сніговику на День народження!
     </h1>
     <p class="text-center text-sm sm:text-base text-gray-700 mb-8">
@@ -282,7 +337,7 @@
     <div id="cooldownContainer" class="flex flex-col items-center">
       <img src="img/waiting.png" alt="Час очікування" />
       <div id="cooldownText" class="mt-2 text-blue-600 font-medium">
-        Зачекаємо, щоб не витрачати усі емоції одразу! Зачекайте, будь ласка, хвильку!
+        Зачекаємо, щоб не витрачати усі емоції одразу! Це займе лише хвильку!
       </div>
     </div>
 
@@ -301,14 +356,14 @@
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path
             d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" />
-          </svg>
+        </svg>
         Поділитися у соцмережі
       </button>
     </div>
   </div>
 
   <!-- html2canvas Library -->
-  <script type="text/javascript" src="html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
     // =========================
@@ -322,9 +377,14 @@
     const glareOverlay = document.getElementById('glareOverlay');
     const stickerPalette = document.getElementById('stickerPalette');
     const cooldownContainer = document.getElementById('cooldownContainer');
+    const mainContent = document.getElementById('mainContent');
+    const groupModal = document.getElementById('groupModal');
+    const submitGroupNameBtn = document.getElementById('submitGroupName');
+    const groupNameInput = document.getElementById('groupNameInput');
+    const mainHeader = document.getElementById('mainHeader');
 
     const MAX_STICKERS = 5;
-    const COOLDOWN_DURATION = 10 * 1000; 
+    const COOLDOWN_DURATION = 10 * 1000;
 
     let stickerCount = 0;
     let draggingSticker = null; // "Тимчасова" наклейка (клон), яку перетягують
@@ -333,6 +393,145 @@
 
     let isFull = false;
     let isCooldown = false;
+    let userGroupName = '';
+
+    // =========================
+    //      Перевірка параметрів URL
+    // =========================
+    function getQueryParams() {
+      const params = {};
+      window.location.search.substring(1).split("&").forEach(pair => {
+        const [key, value] = pair.split("=");
+        if (key) {
+          params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+        }
+      });
+      return params;
+    }
+
+    const queryParams = getQueryParams();
+
+    // =========================
+    //      Збереження та Завантаження Стану
+    // =========================
+
+    // Функція для збереження стану у localStorage
+    function saveState() {
+      const state = {
+        groupName: userGroupName,
+        paletteStickers: Array.from(document.querySelectorAll('#stickerPalette .sticker')).map(sticker => sticker.dataset.sticker),
+        globeStickers: Array.from(snowGlobe.querySelectorAll('.drifting-sticker img')).map(img => {
+          const parent = img.parentElement;
+          const rect = parent.getBoundingClientRect();
+          const globeRect = snowGlobe.getBoundingClientRect();
+          return {
+            src: img.src,
+            left: parseFloat(parent.style.left),
+            top: parseFloat(parent.style.top)
+          };
+        }),
+        stickerCount: stickerCount
+      };
+      localStorage.setItem('snowGlobeState', JSON.stringify(state));
+    }
+
+    // Функція для завантаження стану з localStorage
+    function loadState() {
+      const stateStr = localStorage.getItem('snowGlobeState');
+      if (stateStr) {
+        const state = JSON.parse(stateStr);
+
+        // Відновлення назви групи
+        if (state.groupName) {
+          userGroupName = state.groupName;
+          mainHeader.textContent = `Група ${userGroupName} дарує емоції Сніговику на День народження!`;
+        }
+
+        // Відновлення кількості стікерів
+        stickerCount = state.stickerCount || 0;
+        stickerCountSpan.textContent = stickerCount;
+        globeAnnouncement.textContent = `Зібрано зображень: ${stickerCount}`;
+
+        // Відновлення стікерів у палітрі
+        const allStickers = Array.from(document.querySelectorAll('#stickerPalette .sticker'));
+        allStickers.forEach(sticker => {
+          if (!state.paletteStickers.includes(sticker.dataset.sticker)) {
+            sticker.remove(); // Видалити стікери, які були використані
+          }
+        });
+
+        // Відновлення стікерів у кулі
+        if (state.globeStickers && state.globeStickers.length > 0) {
+          state.globeStickers.forEach(stickerData => {
+            createFloatingSticker(stickerData.src, stickerData.left, stickerData.top, false);
+          });
+        }
+
+        // Відновлення прапорця повноти
+        if (stickerCount >= MAX_STICKERS) {
+          isFull = true;
+          showFullGlobeIndicator();
+        }
+
+        // Відновлення cooldown, якщо необхідно (можна додати додаткову логіку для цього)
+      }
+    }
+
+    // =========================
+    //      Обробка модального вікна
+    // =========================
+    function showGroupModal() {
+      groupModal.style.display = 'flex';
+      mainContent.style.display = 'none';
+    }
+
+    function hideGroupModal() {
+      groupModal.style.display = 'none';
+      mainContent.style.display = 'block';
+    }
+
+    submitGroupNameBtn.addEventListener('click', () => {
+      const inputVal = groupNameInput.value.trim();
+      if (inputVal === '') {
+        alert('Будь ласка, введіть назву групи.');
+        return;
+      }
+      userGroupName = inputVal;
+      hideGroupModal();
+      // Змінюємо заголовок на основній сторінці
+      mainHeader.textContent = `Група ${userGroupName} дарує емоції Сніговику на День народження!`;
+      // Збереження стану
+      saveState();
+      // Ви можете використовувати userGroupName за потреби, наприклад, відобразити його на сторінці
+      console.log('Назва групи:', userGroupName);
+    });
+
+    // Закриття модального вікна при натисканні Enter
+    groupNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitGroupNameBtn.click();
+      }
+    });
+
+    // =========================
+    //      Ініціалізація
+    // =========================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Завантажуємо стан з localStorage
+      loadState();
+
+      if (!userGroupName) {
+        // Якщо назва групи не встановлена, перевіряємо параметри URL
+        if (queryParams.group === 'true') {
+          showGroupModal();
+        } else {
+          mainContent.style.display = 'block';
+        }
+      } else {
+        // Якщо назва групи вже є, показуємо основний контент
+        mainContent.style.display = 'block';
+      }
+    });
 
     // =========================
     //      ПОДІЇ DnD
@@ -366,8 +565,8 @@
         document.body.appendChild(draggingSticker);
 
         // Слухачі переміщення та відпускання
-        sticker.addEventListener('pointermove', handlePointerMove);
-        sticker.addEventListener('pointerup', handlePointerUp, { once: true });
+        document.addEventListener('pointermove', handlePointerMove);
+        document.addEventListener('pointerup', handlePointerUp, { once: true });
       });
     });
 
@@ -383,7 +582,6 @@
     function handlePointerUp(e) {
       if (!draggingSticker) return;
       e.preventDefault();
-      e.target.releasePointerCapture(e.pointerId);
 
       const globeRect = snowGlobe.getBoundingClientRect();
       const dropX = e.clientX - globeRect.left;
@@ -402,7 +600,7 @@
         }
 
         const stickerSrc = draggingSticker.dataset.sticker || 'img/default.png';
-        createFloatingSticker(stickerSrc, dropX, dropY);
+        createFloatingSticker(stickerSrc, dropX, dropY, true); // Pass true to save state
 
         stickerCount++;
         stickerCountSpan.textContent = stickerCount;
@@ -412,14 +610,21 @@
         void snowGlobe.offsetWidth;
         snowGlobe.classList.add('pulse-animation');
 
-        const originalSticker = e.target;
-        originalSticker.style.transition = 'all 0.3s ease-out';
-        originalSticker.style.opacity = '0';
-        originalSticker.style.transform = 'scale(0.8)';
+        // Зменшити оригінальний стікер
+        const originalSticker = Array.from(stickers).find(s => s.dataset.sticker === draggingSticker.dataset.sticker);
+        if (originalSticker) {
+          originalSticker.style.transition = 'all 0.3s ease-out';
+          originalSticker.style.opacity = '0';
+          originalSticker.style.transform = 'scale(0.8)';
+        }
 
         setTimeout(() => {
-          originalSticker.remove();
-          globeAnnouncement.textContent = `Стікер використано та видалено з палітри. Залишилось стікерів: ${document.querySelectorAll('.sticker').length}`;
+          if (originalSticker) {
+            originalSticker.remove();
+            globeAnnouncement.textContent = `Стікер використано та видалено з палітри. Залишилось стікерів: ${document.querySelectorAll('.sticker').length}`;
+            // Збереження стану після видалення стікера з палітри
+            saveState();
+          }
         }, 300);
 
         // Check if maximum stickers reached
@@ -432,20 +637,23 @@
         if (!isFull) {
           startCooldown();
         }
+
+        // Збереження стану
+        saveState();
       }
 
       if (draggingSticker.parentNode) {
         draggingSticker.parentNode.removeChild(draggingSticker);
       }
       draggingSticker = null;
-      e.target.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointermove', handlePointerMove);
     }
 
 
     // =========================
     //     СТВОРЕННЯ СТІКЕРА
     // =========================
-    function createFloatingSticker(stickerSrc, dropX, dropY) {
+    function createFloatingSticker(stickerSrc, dropX, dropY, save = true) {
       const stickerContainer = document.createElement('div');
       stickerContainer.className = 'absolute drifting-sticker flex items-center justify-center';
 
@@ -477,14 +685,27 @@
       stickerContainer.style.animationDuration = `${duration}s`;
 
       snowGlobe.appendChild(stickerContainer);
+
+      // Збереження стану після додавання стікера до кулі
+      if (save) {
+        saveState();
+      }
     }
 
     // =========================
     //  ОЧИЩЕННЯ СНІГОВОЇ КУЛІ
     // =========================
     function resetSnowGlobe() {
+      // Підтвердження очищення
+      if (!confirm('Ви впевнені, що хочете очистити снігову кулю? Всі дані будуть втрачено.')) {
+        return;
+      }
+
       // Видалити всі "плаваючі" стікери
-      snowGlobe.innerHTML = '';
+      snowGlobe.innerHTML = `
+        <div id="glareOverlay"></div>
+        <p id="globeAnnouncement" class="sr-only" aria-live="polite"></p>
+      `;
 
       // Скинути лічильник
       stickerCount = 0;
@@ -511,6 +732,9 @@
 
       // Оновити повідомлення
       globeAnnouncement.textContent = `Всі зображення видалено. Палітра оновлена.`;
+
+      // Очистити localStorage
+      localStorage.removeItem('snowGlobeState');
     }
 
     // =========================
@@ -599,9 +823,11 @@
           });
         } catch (err) {
           console.error('Помилка при використанні Web Share API:', err);
+          alert('Поділитися не вдалося. Спробуйте скопіювати посилання або зберегти знімок екрану.');
         }
       } catch (error) {
         console.error('Помилка при зйомці сторінки:', error);
+        alert('Сталася помилка при створенні знімка екрану.');
       }
     }
   </script>
