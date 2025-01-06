@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Снігова куля з спостереженнями</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ==============================
+       Анімація сніжинок на фоні
+    ============================== */
+    @keyframes fall {
+      to {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+    .snowflake {
+      position: fixed;      
+      top: -3rem;           
+      left: 0;
+      font-size: 1.5rem;    
+      color: #fff;          
+      text-shadow: 0 0 2px #000; 
+      z-index: 9999;        
+      opacity: 1;
+      pointer-events: none; 
+      user-select: none;
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    /* 
+      Плаваюча анімація для наклейок всередині кулі
+    */
+    @keyframes floatAndDrift {
+      0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+      }
+      25% {
+        transform: translateX(-10px) translateY(-10px) rotate(-5deg);
+      }
+      50% {
+        transform: translateX(10px) translateY(0) rotate(5deg);
+      }
+      75% {
+        transform: translateX(-5px) translateY(10px) rotate(-3deg);
+      }
+      100% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+      }
+    }
+
+    .drifting-sticker {
+      animation-name: floatAndDrift;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+
+    /* Стиль елемента, який ми перетягуємо (клон) */
+    .dragging {
+      opacity: 0.8;
+      position: fixed;
+      z-index: 9998; 
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .sticker {
+      touch-action: none;
+      user-select: none;
+    }
+
+    /*
+      Пульсація кулі при успішному дропі.
+    */
+    @keyframes pulseBorder {
+      0% {
+        box-shadow: 0 0 0 4px rgba(255, 0, 0, 0);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.5);
+      }
+      100% {
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
+      }
+    }
+    .pulse-animation {
+      animation: pulseBorder 0.8s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-blue-50 font-sans text-gray-800 relative overflow-hidden">
+  <!-- Головний Контейнер -->
+  <div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+    <!-- Заголовок -->
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-blue-600 mb-4">
+      Снігова куля з спостереженнями
+    </h1>
+    <p class="text-center text-sm sm:text-base text-gray-700 mb-8">
+      Торкніться або клікніть на наклейку й перетягніть її в кулю.<br />
+      Вона залишиться всередині та плаватиме, мов сніжинка!  
+    </p>
+
+    <!-- Секція зі Сніговою Кулею -->
+    <div class="flex flex-col items-center">
+      <!-- Снігова Куля (зона для "дропу") -->
+      <div
+        id="snowGlobe"
+        class="
+          w-64 h-64 sm:w-80 sm:h-80 rounded-full
+          relative overflow-hidden flex items-center justify-center mb-4
+          bg-gradient-to-b from-white to-blue-100
+          border-8 border-white
+          shadow-2xl
+          ring ring-blue-200 ring-offset-4 ring-offset-blue-50
+        "
+        role="region"
+        aria-label="Зона для відпускання наклейок"
+      >
+        <!-- Live region для оголошення кількості наклейок -->
+        <p
+          id="globeAnnouncement"
+          class="sr-only"
+          aria-live="polite"
+        ></p>
+      </div>
+
+      <!-- Лічильник Наклейок -->
+      <div class="text-gray-700 text-sm sm:text-base mb-4">
+        Додано наклейок: 
+        <span id="stickerCount" class="font-medium text-blue-600">0</span>
+      </div>
+    </div>
+
+    <!-- Палітра Наклейок -->
+    <section
+      class="flex flex-wrap justify-center gap-4"
+      role="list"
+      aria-label="Палітра наклейок"
+    >
+      <!-- 
+        Кожна наклейка має role="listitem",
+        використовуємо pointerdown / pointermove / pointerup для перетягування.
+      -->
+      <div
+        class="sticker bg-blue-200 text-blue-800 font-semibold
+               w-16 h-16 flex items-center justify-center
+               rounded-full shadow-md cursor-pointer
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400
+               text-xs sm:text-sm text-center
+        "
+        role="listitem"
+        tabindex="0"
+        data-sticker="Чудова ідея"
+      >
+        💫<br/>Ідея
+      </div>
+
+      <div
+        class="sticker bg-green-200 text-green-800 font-semibold
+               w-16 h-16 flex items-center justify-center
+               rounded-full shadow-md cursor-pointer
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400
+               text-xs sm:text-sm text-center
+        "
+        role="listitem"
+        tabindex="0"
+        data-sticker="Командна робота"
+      >
+        🤝<br/>Команда
+      </div>
+
+      <div
+        class="sticker bg-yellow-200 text-yellow-800 font-semibold
+               w-16 h-16 flex items-center justify-center
+               rounded-full shadow-md cursor-pointer
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400
+               text-xs sm:text-sm text-center
+        "
+        role="listitem"
+        tabindex="0"
+        data-sticker="Творчість"
+      >
+        🎨<br/>Творчість
+      </div>
+
+      <div
+        class="sticker bg-pink-200 text-pink-800 font-semibold
+               w-16 h-16 flex items-center justify-center
+               rounded-full shadow-md cursor-pointer
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400
+               text-xs sm:text-sm text-center
+        "
+        role="listitem"
+        tabindex="0"
+        data-sticker="Натхнення"
+      >
+        ✨<br/>Натхнення
+      </div>
+    </section>
+
+    <!-- Кнопка для Очищення Кулі -->
+    <div class="mt-4 flex justify-center">
+      <button
+        class="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
+        type="button"
+        onclick="resetSnowGlobe()"
+      >
+        Очистити кулю
+      </button>
+    </div>
+
+    <!-- ===================================== -->
+    <!--       ДОДАНО КНОПКИ ДЛЯ ШАРІНГУ       -->
+    <!-- ===================================== -->
+    <div class="mt-8 flex justify-center space-x-4">
+      <!-- Зробити скріншот і (теоретично) поділитися у Facebook -->
+      <button
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+        type="button"
+        onclick="captureAndShareScreenshot('facebook')"
+      >
+        Скріншот → Facebook
+      </button>
+
+      <!-- Зробити скріншот і (теоретично) поділитися в Instagram -->
+      <button
+        class="bg-pink-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-pink-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400"
+        type="button"
+        onclick="captureAndShareScreenshot('instagram')"
+      >
+        Скріншот → Instagram
+      </button>
+    </div>
+  </div>
+
+  <!-- html2canvas Library -->
+  <script type="text/javascript" src="html2canvas.min.js"></script>
+
+  <script>
+    // =========================
+    //   ЗМІННІ ТА ПОСИЛАННЯ
+    // =========================
+    const stickers = document.querySelectorAll('.sticker');
+    const snowGlobe = document.getElementById('snowGlobe');
+    const stickerCountSpan = document.getElementById('stickerCount');
+    const globeAnnouncement = document.getElementById('globeAnnouncement');
+
+    let stickerCount = 0;
+
+    // "Тимчасова" наклейка, яку перетягують
+    let draggingSticker = null;
+
+    // Зміщення по X/Y всередині наклейки
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // =========================
+    //      ПОДІЇ DnD
+    // =========================
+    stickers.forEach((sticker) => {
+      // Початок перетягування
+      sticker.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+
+        // Запам'ятовуємо зміщення (куди користувач натиснув всередині наклейки)
+        const rect = sticker.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        // Дозволити захоплення подій
+        sticker.setPointerCapture(e.pointerId);
+
+        // Створюємо клон для візуального "drag"
+        draggingSticker = sticker.cloneNode(true);
+        draggingSticker.classList.add('dragging');
+        draggingSticker.dataset.sticker = sticker.dataset.sticker;
+
+        // Початкове позиціонування
+        draggingSticker.style.left = e.pageX + 'px';
+        draggingSticker.style.top = e.pageY + 'px';
+
+        document.body.appendChild(draggingSticker);
+
+        // Слухачі переміщення та відпускання
+        sticker.addEventListener('pointermove', handlePointerMove);
+        sticker.addEventListener('pointerup', handlePointerUp, { once: true });
+      });
+    });
+
+    // Переміщення наклейки під час drag
+    function handlePointerMove(e) {
+      if (!draggingSticker) return;
+      e.preventDefault();
+      draggingSticker.style.left = (e.pageX - offsetX) + 'px';
+      draggingSticker.style.top = (e.pageY - offsetY) + 'px';
+    }
+
+    // Кінець перетягування
+    function handlePointerUp(e) {
+      if (!draggingSticker) return;
+
+      e.preventDefault();
+      // Відпускаємо захоплення
+      e.target.releasePointerCapture(e.pointerId);
+
+      // Координати точки відпускання
+      const dropX = e.clientX;
+      const dropY = e.clientY;
+
+      // Межі кулі
+      const globeRect = snowGlobe.getBoundingClientRect();
+
+      // Перевірка, чи точка всередині кулі
+      const insideGlobe = (
+        dropX >= globeRect.left &&
+        dropX <= globeRect.right &&
+        dropY >= globeRect.top &&
+        dropY <= globeRect.bottom
+      );
+
+      if (insideGlobe) {
+        // Вібрація (якщо підтримується)
+        if (navigator.vibrate) {
+          navigator.vibrate(80);
+        }
+
+        // Створення "плаваючої" наклейки
+        const text = draggingSticker.dataset.sticker || 'Наклейка';
+        createFloatingSticker(text);
+
+        // Оновлення лічильника
+        stickerCount++;
+        stickerCountSpan.textContent = stickerCount;
+        globeAnnouncement.textContent = `Додано наклейок: ${stickerCount}`;
+
+        // Пульсація кулі
+        snowGlobe.classList.remove('pulse-animation');
+        void snowGlobe.offsetWidth; // перезапустити анімацію
+        snowGlobe.classList.add('pulse-animation');
+      }
+
+      // Прибираємо клон
+      if (draggingSticker.parentNode) {
+        draggingSticker.parentNode.removeChild(draggingSticker);
+      }
+      draggingSticker = null;
+
+      // Припиняємо відслідковувати pointermove
+      e.target.removeEventListener('pointermove', handlePointerMove);
+    }
+
+    // =========================
+    //     СТВОРЕННЯ НАКЛЕЙКИ
+    // =========================
+    function createFloatingSticker(text) {
+      // Новий div з текстом
+      const stickerElement = document.createElement('div');
+      stickerElement.textContent = text;
+
+      stickerElement.className = `
+        absolute font-semibold text-center
+        flex items-center justify-center
+        rounded-full shadow-md
+        text-blue-800 bg-blue-100
+        drifting-sticker
+      `;
+      // Розмір "сніжки"
+      stickerElement.style.width = '3rem';
+      stickerElement.style.height = '3rem';
+
+      // Розташування випадкове всередині кулі
+      const globeRect = snowGlobe.getBoundingClientRect();
+      const maxX = globeRect.width - 48; // 48 ~ розмір елемента
+      const maxY = globeRect.height - 48;
+      const randomX = Math.random() * maxX;
+      const randomY = Math.random() * maxY;
+
+      stickerElement.style.left = randomX + 'px';
+      stickerElement.style.top = randomY + 'px';
+
+      // Випадкова тривалість анімації (4-8 секунд)
+      const duration = Math.random() * 4 + 4;
+      stickerElement.style.animationDuration = `${duration}s`;
+
+      // Додаємо до кулі
+      snowGlobe.appendChild(stickerElement);
+    }
+
+    // =========================
+    //  ОЧИЩЕННЯ СНІГОВОЇ КУЛІ
+    // =========================
+    function resetSnowGlobe() {
+      // Видалити всі "плаваючі" наклейки
+      snowGlobe.innerHTML = '';
+      // Скинути лічильник
+      stickerCount = 0;
+      stickerCountSpan.textContent = stickerCount;
+      globeAnnouncement.textContent = `Всі наклейки видалено.`;
+    }
+
+    // =========================
+    //  СТВОРЕННЯ СНІЖИНОК
+    // =========================
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.textContent = '❄';
+      snowflake.className = 'snowflake';
+      
+      const startX = Math.random() * window.innerWidth;
+      snowflake.style.left = startX + 'px';
+
+      const duration = Math.random() * 5 + 5;
+      snowflake.style.animationDuration = duration + 's';
+
+      document.body.appendChild(snowflake);
+
+      setTimeout(() => {
+        if (snowflake.parentNode) {
+          snowflake.parentNode.removeChild(snowflake);
+        }
+      }, duration * 1000);
+    }
+    // Кожні 300 мс створюємо нову сніжинку
+    setInterval(createSnowflake, 300);
+
+    // =========================
+    //     ЗЙОМКА СТОРІНКИ
+    // =========================
+    async function captureAndShareScreenshot(platform) {
+      try {
+        // 1. Захопити скріншот всієї сторінки (або ви можете обрати #snowGlobe)
+        const canvas = await html2canvas(document.body, { useCORS: true });
+        const dataURL = canvas.toDataURL('image/png');
+
+        if (platform === 'facebook') {
+          // ---------------------------
+          // FACEBOOK SHARE (DEMO ONLY)
+          // ---------------------------
+          // Facebook не приймає "dataURL" напряму. Зазвичай потрібно:
+          // 1) Завантажити зображення на свій сервер або сервіс,
+          // 2) Отримати публічний URL,
+          // 3) Використати стандартний share link з URL зображення.
+          //
+          // Тут лише відкриємо нове вікно з нашим скріншотом, 
+          // щоб продемонструвати отриманий результат.
+          const newWindow = window.open();
+          newWindow.document.write('<img src="' + dataURL + '" />');
+          newWindow.document.title = "Ваш скріншот";
+
+          alert("Facebook sharing із dataURL неможливий без завантаження на сервер. (Демо: відкрили скріншот в новому вікні.)");
+        } 
+        else if (platform === 'instagram') {
+          // -----------------------------
+          // INSTAGRAM SHARE (DEMO ONLY)
+          // -----------------------------
+          // Немає офіційного веб-API для публікації зображень напряму в Instagram.
+          // Можливий обхід: Web Share API з файлом (якщо браузер підтримує).
+          // 1. Перетворити dataURL у "файл"
+          // 2. Викликати navigator.share({ files: [file], ... }) 
+          // (Вимагає HTTPS та підтримки 'navigator.canShare')
+          
+          const response = await fetch(dataURL);
+          const blob = await response.blob();
+          const file = new File([blob], "screenshot.png", { type: "image/png" });
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                files: [file],
+                title: 'Снігова куля',
+                text: 'Подивіться на цю цікаву сторінку!'
+              });
+            } catch (err) {
+              console.error('Помилка при використанні Web Share API:', err);
+            }
+          } else {
+            // Фолбек – просто відкриваємо скрін в новому вікні
+            const newWindow = window.open();
+            newWindow.document.write('<img src="' + dataURL + '" />');
+            newWindow.document.title = "Ваш скріншот";
+
+            alert("Ваш браузер не підтримує прямий share файлів. (Демо: відкрили скріншот в новому вікні.)");
+          }
+        }
+      } catch (error) {
+        console.error('Помилка при зйомці сторінки:', error);
+      }
+    }
+  </script>
+</body>
+</html>
