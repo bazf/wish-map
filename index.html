@@ -118,16 +118,61 @@
 
     <!-- Секція зі Сніговою Кулею -->
     <div class="flex flex-col items-center">
-      <!-- Снігова Куля (зона для "дропу") -->
-      <div id="snowGlobe" class="w-72 h-72 sm:w-96 sm:h-96 rounded-full relative overflow-hidden flex items-center justify-center mb-4
-               bg-gradient-to-b from-white to-blue-100 border-8 border-white shadow-2xl
-               ring ring-blue-200 ring-offset-4 ring-offset-blue-50" role="region"
-        aria-label="Зона для відпускання зображень">
-        <!-- Live region для оголошення кількості стікерів -->
-        <p id="globeAnnouncement" class="sr-only" aria-live="polite"></p>
+      <!-- Container for Snow Globe and Reset Button -->
+      <div class="relative">
+        <!-- Snow Globe (drop zone) -->
+        <div
+          id="snowGlobe"
+          class="w-72 h-72 sm:w-96 sm:h-96 rounded-full relative overflow-hidden flex items-center justify-center
+                 bg-gradient-to-b from-white to-blue-100 border-8 border-white shadow-2xl
+                 ring ring-blue-200 ring-offset-4 ring-offset-blue-50"
+          role="region"
+          aria-label="Зона для відпускання зображень"
+        >
+          <!-- Live region for announcements -->
+          <p id="globeAnnouncement" class="sr-only" aria-live="polite"></p>
+        </div>
+        
+        <!-- Reset Button -->
+        <button
+          type="button"
+          onclick="resetSnowGlobe()"
+          class="absolute -top-4 -right-4 p-3 bg-red-500 hover:bg-red-600 
+                 text-white rounded-full shadow-lg transition-all duration-200
+                 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-400 
+                 focus:ring-offset-2 group"
+          aria-label="Очистити кулю"
+        >
+          <!-- Trash Icon (SVG) -->
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"
+          >
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+          <!-- Tooltip -->
+          <span class="absolute bottom-full right-0 mb-2 w-auto min-w-max 
+                       bg-gray-900 text-white text-sm px-2 py-1 rounded-lg
+                       opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                       pointer-events-none">
+            Очистити кулю
+          </span>
+        </button>
       </div>
-      <!-- Лічильник стікерів -->
-      <div class="text-gray-700 text-sm sm:text-base mb-4">
+      
+      <!-- Sticker Counter -->
+      <div class="text-gray-700 text-sm sm:text-base mt-4">
         Подаровано снігових емоцій:
         <span id="stickerCount" class="font-medium text-blue-600">0</span>
       </div>
@@ -195,15 +240,6 @@
              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400" role="listitem" tabindex="0"
         data-sticker="img/wooh.png" />
     </section>
-
-    <!-- Кнопка для Очищення Кулі -->
-    <div class="flex justify-center mb-8">
-      <button
-        class="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400"
-        type="button" onclick="resetSnowGlobe()">
-        Очистити кулю
-      </button>
-    </div>
 
     <!-- ===================================== -->
     <!--       ДОДАНО КНОПКИ ДЛЯ ШАРІНГУ       -->
@@ -285,70 +321,66 @@
 
     // Кінець перетягування
     function handlePointerUp(e) {
-      if (!draggingSticker) return;
-      e.preventDefault();
-      e.target.releasePointerCapture(e.pointerId);
+  if (!draggingSticker) return;
+  e.preventDefault();
+  e.target.releasePointerCapture(e.pointerId);
 
-      // Координати точки відпускання
-      const dropX = e.clientX;
-      const dropY = e.clientY;
+  // Get drop coordinates
+  const dropX = e.clientX;
+  const dropY = e.clientY;
 
-      // Межі кулі
-      const globeRect = snowGlobe.getBoundingClientRect();
-      const insideGlobe = (
-        dropX >= globeRect.left &&
-        dropX <= globeRect.right &&
-        dropY >= globeRect.top &&
-        dropY <= globeRect.bottom
-      );
+  // Get snow globe boundaries
+  const globeRect = snowGlobe.getBoundingClientRect();
+  const insideGlobe = (
+    dropX >= globeRect.left &&
+    dropX <= globeRect.right &&
+    dropY >= globeRect.top &&
+    dropY <= globeRect.bottom
+  );
 
-      if (insideGlobe) {
-        // Вібрація (якщо підтримується)
-        if (navigator.vibrate) {
-          navigator.vibrate(80);
-        }
-
-        // Шлях до зображення (з data-sticker)
-        const stickerSrc = draggingSticker.dataset.sticker || 'img/default.png';
-        createFloatingSticker(stickerSrc);
-
-        // Оновлення лічильника
-        stickerCount++;
-        stickerCountSpan.textContent = stickerCount;
-        globeAnnouncement.textContent = `Зібрано зображень: ${stickerCount}`;
-
-        // Пульсація кулі
-        snowGlobe.classList.remove('pulse-animation');
-        void snowGlobe.offsetWidth; // перезапустити анімацію
-        snowGlobe.classList.add('pulse-animation');
-
-        // Remove the original sticker from the palette
-        const originalSticker = e.target;
-        const stickerContainer = originalSticker.parentElement;
-
-        // Add fade-out animation class
-        originalSticker.style.transition = 'opacity 0.3s ease-out';
-        originalSticker.style.opacity = '0';
-
-        // Remove the sticker after animation
-        setTimeout(() => {
-          if (stickerContainer) {
-            stickerContainer.removeChild(originalSticker);
-          }
-          // Update ARIA live region
-          globeAnnouncement.textContent = `Стікер використано та видалено з палітри. Залишилось стікерів: ${document.querySelectorAll('.sticker').length}`;
-        }, 300);
-      }
-
-      // Прибираємо клон
-      if (draggingSticker.parentNode) {
-        draggingSticker.parentNode.removeChild(draggingSticker);
-      }
-      draggingSticker = null;
-
-      // Припиняємо відслідковувати pointermove
-      e.target.removeEventListener('pointermove', handlePointerMove);
+  if (insideGlobe) {
+    // Vibration feedback if supported
+    if (navigator.vibrate) {
+      navigator.vibrate(80);
     }
+
+    // Get sticker source
+    const stickerSrc = draggingSticker.dataset.sticker || 'img/default.png';
+    createFloatingSticker(stickerSrc);
+
+    // Update counter
+    stickerCount++;
+    stickerCountSpan.textContent = stickerCount;
+    globeAnnouncement.textContent = `Зібрано зображень: ${stickerCount}`;
+
+    // Pulse animation for the globe
+    snowGlobe.classList.remove('pulse-animation');
+    void snowGlobe.offsetWidth; // Reset animation
+    snowGlobe.classList.add('pulse-animation');
+
+    // Remove the original sticker with fade-out animation
+    const originalSticker = e.target;
+    originalSticker.style.transition = 'all 0.3s ease-out';
+    originalSticker.style.opacity = '0';
+    originalSticker.style.transform = 'scale(0.8)';
+    
+    setTimeout(() => {
+      originalSticker.remove();
+      // Update accessibility announcement
+      globeAnnouncement.textContent = `Стікер використано та видалено з палітри. Залишилось стікерів: ${document.querySelectorAll('.sticker').length}`;
+    }, 300);
+  }
+
+  // Remove the dragging clone
+  if (draggingSticker.parentNode) {
+    draggingSticker.parentNode.removeChild(draggingSticker);
+  }
+  draggingSticker = null;
+
+  // Remove pointermove listener
+  e.target.removeEventListener('pointermove', handlePointerMove);
+}
+
 
     // =========================
     //     СТВОРЕННЯ СТІКЕРА
