@@ -197,6 +197,20 @@
     #groupModalContent button:hover {
       background-color: #2563eb;
     }
+
+    /* Стилі для заголовку під стікерами */
+    .sticker-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sticker-caption {
+      margin-top: 0.5rem;
+      font-size: 0.875rem; /* text-sm */
+      color: #4B5563; /* Tailwind's gray-700 */
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -271,66 +285,96 @@
     </div>
 
     <!-- Палітра зображень (стікери) -->
-    <section id="stickerPalette" class="flex flex-wrap justify-center gap-2 mb-2" role="list" aria-label="Палітра зображень">
+    <section id="stickerPalette" class="flex flex-wrap justify-center gap-4 mb-2" role="list" aria-label="Палітра зображень">
       <!-- Bravo -->
-      <img src="img/bravo.png" alt="Браво!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" role="listitem" tabindex="0"
-        data-sticker="img/bravo.png" />
+      <div class="sticker-container">
+        <img src="img/bravo.png" alt="Браво!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" role="listitem" tabindex="0"
+          data-sticker="img/bravo.png" />
+        <span class="sticker-caption">Браво!</span>
+      </div>
 
       <!-- Breathtaking -->
-      <img src="img/breathtaking.png" alt="Захоплююче!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400" role="listitem" tabindex="0"
-        data-sticker="img/breathtaking.png" />
+      <div class="sticker-container">
+        <img src="img/breathtaking.png" alt="Захоплююче!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400" role="listitem" tabindex="0"
+          data-sticker="img/breathtaking.png" />
+        <span class="sticker-caption">Захоплююче!</span>
+      </div>
 
       <!-- Enjoy -->
-      <img src="img/enjoy.png" alt="Насолода!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400" role="listitem" tabindex="0"
-        data-sticker="img/enjoy.png" />
+      <div class="sticker-container">
+        <img src="img/enjoy.png" alt="Насолода!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400" role="listitem" tabindex="0"
+          data-sticker="img/enjoy.png" />
+        <span class="sticker-caption">Насолода!</span>
+      </div>
 
       <!-- Interesting -->
-      <img src="img/interesting.png" alt="Цікаво!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400" role="listitem" tabindex="0"
-        data-sticker="img/interesting.png" />
+      <div class="sticker-container">
+        <img src="img/interesting.png" alt="Цікаво!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400" role="listitem" tabindex="0"
+          data-sticker="img/interesting.png" />
+        <span class="sticker-caption">Цікаво!</span>
+      </div>
 
       <!-- Nightmare -->
-      <img src="img/nightmare.png" alt="Кошмар!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400" role="listitem" tabindex="0"
-        data-sticker="img/nightmare.png" />
+      <div class="sticker-container">
+        <img src="img/nightmare.png" alt="Кошмар!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400" role="listitem" tabindex="0"
+          data-sticker="img/nightmare.png" />
+        <span class="sticker-caption">Кошмар!</span>
+      </div>
 
       <!-- On Top -->
-      <img src="img/on-top.png" alt="На висоті!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" role="listitem" tabindex="0"
-        data-sticker="img/on-top.png" />
+      <div class="sticker-container">
+        <img src="img/on-top.png" alt="На висоті!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" role="listitem" tabindex="0"
+          data-sticker="img/on-top.png" />
+        <span class="sticker-caption">На висоті!</span>
+      </div>
 
       <!-- Sad -->
-      <img src="img/sad.png" alt="Сумно :(" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400" role="listitem" tabindex="0"
-        data-sticker="img/sad.png" />
+      <div class="sticker-container">
+        <img src="img/sad.png" alt="Сумно :(" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400" role="listitem" tabindex="0"
+          data-sticker="img/sad.png" />
+        <span class="sticker-caption">Сумно :(</span>
+      </div>
 
       <!-- What a Pleasure -->
-      <img src="img/what-a-pleasure.png" alt="Яке задоволення" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400" role="listitem" tabindex="0"
-        data-sticker="img/what-a-pleasure.png" />
+      <div class="sticker-container">
+        <img src="img/what-a-pleasure.png" alt="Яке задоволення" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400" role="listitem" tabindex="0"
+          data-sticker="img/what-a-pleasure.png" />
+        <span class="sticker-caption">Яке задоволення</span>
+      </div>
 
       <!-- Wonderful -->
-      <img src="img/wonderful.png" alt="Чудово!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400" role="listitem" tabindex="0"
-        data-sticker="img/wonderful.png" />
+      <div class="sticker-container">
+        <img src="img/wonderful.png" alt="Чудово!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-400" role="listitem" tabindex="0"
+          data-sticker="img/wonderful.png" />
+        <span class="sticker-caption">Чудово!</span>
+      </div>
 
       <!-- Wooh -->
-      <img src="img/wooh.png" alt="Вау!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
-             hover:scale-105 hover:shadow-lg transition
-             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400" role="listitem" tabindex="0"
-        data-sticker="img/wooh.png" />
+      <div class="sticker-container">
+        <img src="img/wooh.png" alt="Вау!" class="sticker w-20 h-20 cursor-pointer rounded-full shadow-md
+               hover:scale-105 hover:shadow-lg transition
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400" role="listitem" tabindex="0"
+          data-sticker="img/wooh.png" />
+        <span class="sticker-caption">Вау!</span>
+      </div>
     </section>
 
     <!-- Cooldown Container -->
@@ -456,7 +500,7 @@
         const allStickers = Array.from(document.querySelectorAll('#stickerPalette .sticker'));
         allStickers.forEach(sticker => {
           if (!state.paletteStickers.includes(sticker.dataset.sticker)) {
-            sticker.remove(); // Видалити стікери, які були використані
+            sticker.closest('.sticker-container').remove(); // Видалити стікери, які були використані
           }
         });
 
@@ -620,7 +664,7 @@
 
         setTimeout(() => {
           if (originalSticker) {
-            originalSticker.remove();
+            originalSticker.closest('.sticker-container').remove();
             globeAnnouncement.textContent = `Стікер використано та видалено з палітри. Залишилось стікерів: ${document.querySelectorAll('.sticker').length}`;
             // Збереження стану після видалення стікера з палітри
             saveState();
@@ -723,11 +767,11 @@
       }
 
       // Показати всі стікери в палітрі
-      const allStickers = document.querySelectorAll('.sticker');
-      allStickers.forEach((sticker) => {
-        sticker.style.opacity = '1';
-        sticker.style.transform = 'scale(1)';
-        sticker.style.transition = 'none';
+      const allStickers = document.querySelectorAll('.sticker-container');
+      allStickers.forEach((container) => {
+        container.style.opacity = '1';
+        container.style.transform = 'scale(1)';
+        container.style.transition = 'none';
       });
 
       // Оновити повідомлення
