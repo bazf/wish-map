@@ -408,7 +408,7 @@
     // =========================
     //     ЗЙОМКА СТОРІНКИ
     // =========================
-    async function captureAndShareScreenshot(platform) {
+    async function captureAndShareScreenshot() {
       try {
         // 1. Захопити скріншот всієї сторінки (або ви можете обрати #snowGlobe)
         const canvas = await html2canvas(document.body, { useCORS: true });
@@ -420,56 +420,15 @@
           const blob = await response.blob();
           const file = new File([blob], "screenshot.png", { type: "image/png" });
 
-          // 2. Attempt to share via Web Share API
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-              await navigator.share({
-                files: [file],
-                title: 'Снігова куля',
-                text: 'Подивіться на цю цікаву сторінку!'
-              });
-            } catch (err) {
-              console.error('Помилка при використанні Web Share API:', err);
-            }
-          } else {
-            // 3. Fallback if sharing files isn’t supported
-            const newWindow = window.open();
-            newWindow.document.write('<img src="' + dataURL + '" />');
-            newWindow.document.title = "Ваш скріншот";
-            alert("Ваш браузер не підтримує прямий share файлів. (Демо: відкрили скріншот в новому вікні.)");
-          }
-          if (platform === 'instagram') {
-            // -----------------------------
-            // INSTAGRAM SHARE (DEMO ONLY)
-            // -----------------------------
-            // Немає офіційного веб-API для публікації зображень напряму в Instagram.
-            // Можливий обхід: Web Share API з файлом (якщо браузер підтримує).
-            // 1. Перетворити dataURL у "файл"
-            // 2. Викликати navigator.share({ files: [file], ... }) 
-            // (Вимагає HTTPS та підтримки 'navigator.canShare')
-
-            const response = await fetch(dataURL);
-            const blob = await response.blob();
-            const file = new File([blob], "screenshot.png", { type: "image/png" });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              try {
-                await navigator.share({
-                  files: [file],
-                  title: 'Снігова куля',
-                  text: 'Подивіться на цю цікаву сторінку!'
-                });
-              } catch (err) {
-                console.error('Помилка при використанні Web Share API:', err);
-              }
-            } else {
-              // Фолбек – просто відкриваємо скрін в новому вікні
-              const newWindow = window.open();
-              newWindow.document.write('<img src="' + dataURL + '" />');
-              newWindow.document.title = "Ваш скріншот";
-
-              alert("Ваш браузер не підтримує прямий share файлів. (Демо: відкрили скріншот в новому вікні.)");
-            }
+          // 2. Attempt to share via Web Share API          
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'Снігова куля',
+              text: 'Подивіться на цю цікаву сторінку!'
+            });
+          } catch (err) {
+            console.error('Помилка при використанні Web Share API:', err);
           }
         }
       } catch (error) {
