@@ -130,12 +130,13 @@
       left: 0;
       width: 100%;
       height: 100%;
+      opacity: 35%;
       background: linear-gradient(324deg, rgb(37 115 213 / 60%), rgb(250 252 255 / 20%));
       backdrop-filter: blur(5px);
       border-radius: 50%;
       display: none; /* Initially hidden */
       pointer-events: none;
-      z-index: 0;
+      z-index: 10;
     }
 
     /* Стиль для Cooldown Container */
@@ -835,6 +836,9 @@
       shareButtonContainer.classList.remove('hidden');
       // Ховати палітру стікерів
       stickerPalette.classList.add('hidden');
+
+      snowGlobe.classList.add('border-white');
+      snowGlobe.classList.add('border-indigo-200');
     }
 
     function hideFullGlobeIndicator() {
@@ -842,6 +846,9 @@
       glareOverlay.style.display = 'none';
       // Ховати кнопку Share
       shareButtonContainer.classList.add('hidden');
+
+      snowGlobe.classList.add('border-indigo-200');
+      snowGlobe.classList.add('border-white');
     }
 
     // =========================
