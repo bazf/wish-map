@@ -293,7 +293,9 @@
 
       <!-- Повідомлення про повний глобус -->
       <div id="fullMessage" class="text-blue-600">
-        Снігова куля вже заповнена!
+        СНІГОВА КУЛЯ ПОВНА!
+        <br>
+        На жаль, Ви більше не можете додавати реакції.
       </div>
     </div>
 
@@ -401,7 +403,7 @@
     <!-- ===================================== -->
     <!--       ДОДАНО КНОПКИ ДЛЯ ШАРІНГУ       -->
     <!-- ===================================== -->
-    <div class="mt-8 flex justify-center space-x-4">
+    <div id="shareButtonContainer" class="mt-8 flex justify-center space-x-4 hidden">
       <!-- Зробити скріншот та поділитися (якщо можливо) -->
       <button
         class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 flex items-center gap-2"
@@ -439,6 +441,7 @@
     const submitGroupNameBtn = document.getElementById('submitGroupName');
     const groupNameInput = document.getElementById('groupNameInput');
     const mainHeader = document.getElementById('mainHeader');
+    const shareButtonContainer = document.getElementById('shareButtonContainer');
 
     const MAX_STICKERS = 5;
     const COOLDOWN_DURATION = 10 * 1000;
@@ -809,11 +812,15 @@
     function showFullGlobeIndicator() {
       fullMessage.style.display = 'block';
       glareOverlay.style.display = 'block';
+      // Show the Share button
+      shareButtonContainer.classList.remove('hidden');
     }
 
     function hideFullGlobeIndicator() {
       fullMessage.style.display = 'none';
       glareOverlay.style.display = 'none';
+      // Hide the Share button
+      shareButtonContainer.classList.add('hidden');
     }
 
     // =========================
