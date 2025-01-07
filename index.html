@@ -509,7 +509,7 @@
         // Відновлення назви групи
         if (state.groupName) {
           userGroupName = state.groupName;
-          mainHeader.textContent = `Група ${userGroupName} дарує емоції Сніговику на День народження!`;
+          mainHeader.textContent = `Група «${userGroupName}» дарує емоції Сніговику на День народження!`;
         }
 
         // Відновлення кількості стікерів
@@ -822,7 +822,7 @@
       if (userGroupName) {
         fullMessage.innerHTML = `УРА! ВИ НАПОВНИЛИ КУЛЮ ЕМОЦІЯМИ!
         <br>
-        Сніговик вельми вдячний за підтримку від вашої групи <strong>${userGroupName}</strong>!`;
+        Сніговик вельми вдячний за підтримку від вашої групи <strong>«${userGroupName}»</strong>!`;
       } else {
         fullMessage.innerHTML = `УРА! ВИ НАПОВНИЛИ КУЛЮ ЕМОЦІЯМИ!
         <br>
